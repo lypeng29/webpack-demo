@@ -1,11 +1,13 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
 module.exports = {
   entry: {
   	app: './src/index.js',
   	print: './src/print.js',
   },
   plugins: [
+  	new CleanWebpackPlugin(['dist']),	//传递清空的目录，数组形式
   	new HtmlWebpackPlugin({
   		title: 'output management'
   	})
