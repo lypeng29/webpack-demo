@@ -61,11 +61,53 @@ module.exports = {
 };
 ```
 
-HtmlWebpackPlugin
+###HtmlWebpackPlugin
 打包所有文件到dist，包括index.html，不用事先写好index.html
 
-CleanWebpackPlugin
+###CleanWebpackPlugin
 创建所有文件之前清空dist目录
 npm install --save-dev clean-webpack-plugin
 
+###watch
+在package.json中增加`"watch": "webpack --watch"`，然后运行npm run watch，将监视目录，修改保存后自动生成文件，不用再执行一次npm run build！
+
+###webpack-dev-server
+1. npm install --save-dev webpack-dev-server
+2. 修改webpack.config.js   
+  devtool: 'inline-source-map',
+  devServer: {
+  	contentBase: './dist'
+  },
+3. 修改package.json，新增："start": "webpack-dev-server --open"
+4. 运行npm run start，浏览器将打开localhost:8080地址
+5. 修改src中的文件保存后，重新打包生成dist，浏览器页面自动刷新
+
+###webpack-dev-middleware
+webpack-dev-middleware与webpack-dev-server，感觉不出有多大差异，备注唯一点：middleware不会自动刷新~
+1. npm install --save-dev express webpack-dev-middleware
+2. 新增server.js，内容如下：
+
+```
+const express = require('express');
+const webpack = require('webpack');
+const webpackDevMiddleware = require('webpack-dev-middleware');
+
+const app = express();
+const config = require('./webpack.config.js');
+const compiler = webpack(config);
+
+// Tell express to use the webpack-dev-middleware and use the webpack.config.js
+// configuration file as a base.
+app.use(webpackDevMiddleware(compiler, {
+  publicPath: config.output.publicPath
+}));
+
+// Serve the files on port 3000.
+app.listen(3000, function () {
+  console.log('Example app listening on port 3000!\n');
+});
+```
+3. webpack.config.js在output中新增：publicPath: '/'
+4. package.json新增："server": "node server.js"
+5. 执行npm run server
 
